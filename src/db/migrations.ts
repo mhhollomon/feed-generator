@@ -1,4 +1,5 @@
 import { Kysely, Migration, MigrationProvider } from 'kysely'
+import { validateSkeletonSearchActor } from '../lexicon/types/app/bsky/unspecced/defs'
 
 const migrations: Record<string, Migration> = {}
 
@@ -26,4 +27,19 @@ migrations['001'] = {
     await db.schema.dropTable('post').execute()
     await db.schema.dropTable('sub_state').execute()
   },
+}
+
+migrations['002'] = {
+  async up(db: Kysely<unknown>) {
+    await db.schema
+      .alterTable('post')
+      .addColumn('author', 'varchar')
+      .execute()
+  },
+  async down(db: Kysely<unknown>) {
+    await db.schema
+      .alterTable('post')
+      .dropColumn('author')
+      .execute()
+  }
 }

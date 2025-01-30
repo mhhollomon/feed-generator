@@ -6,9 +6,12 @@ import { validateAuth } from '../auth'
 import { AtUri } from '@atproto/syntax'
 
 export default function (server: Server, ctx: AppContext) {
+  console.log("hello from feed-generation")
   server.app.bsky.feed.getFeedSkeleton(async ({ params, req }) => {
     const feedUri = new AtUri(params.feed)
+    console.log("Algo = " + feedUri.rkey)
     const algo = algos[feedUri.rkey]
+    console.log("hostname = " + feedUri.hostname)
     if (
       feedUri.hostname !== ctx.cfg.publisherDid ||
       feedUri.collection !== 'app.bsky.feed.generator' ||

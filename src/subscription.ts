@@ -4,6 +4,8 @@ import {
 } from './lexicon/types/com/atproto/sync/subscribeRepos'
 import { FirehoseSubscriptionBase, getOpsByType } from './util/subscription'
 
+const muwee_id = "did:plc:f3mkgbj4ibmtmn2u4b2dpgid"
+
 export class FirehoseSubscription extends FirehoseSubscriptionBase {
   async handleEvent(evt: RepoEvent) {
     if (!isCommit(evt)) return
@@ -13,22 +15,31 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     // This logs the text of every post off the firehose.
     // Just for fun :)
     // Delete before actually using
-    for (const post of ops.posts.creates) {
+    /* for (const post of ops.posts.creates) {
+      console.log("--------------------")
+      console.log(post.author)
+      console.log("--------------------")
       console.log(post.record.text)
     }
-
+*/
+    
     const postsToDelete = ops.posts.deletes.map((del) => del.uri)
     const postsToCreate = ops.posts.creates
       .filter((create) => {
-        // only alf-related posts
-        return create.record.text.toLowerCase().includes('alf')
+
+        const lowertext = create.record.text.toLowerCase()
+        return lowertext.includes('musicweeklies.bsky.social') ||
+          lowertext.includes('#muwee') ||
+          create.author == muwee_id
       })
       .map((create) => {
-        // map alf-related posts to a db row
+        console.log(create.record.text)
+
         return {
           uri: create.uri,
           cid: create.cid,
           indexedAt: new Date().toISOString(),
+          author : create.author
         }
       })
 
