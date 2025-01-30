@@ -18,6 +18,8 @@ export const handler = async (ctx: AppContext, params: QueryParams) => {
   }
   const res = await builder.execute()
 
+  console.log("returning count = ", res.length)
+
   const feed = res.map((row) => ({
     post: row.uri,
   }))
